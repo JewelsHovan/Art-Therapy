@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Generate Art - Art Therapy Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/generate.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="components/sidebar.js"></script>
+    <script type="module" src="js/common.js"></script>
+</head>
+<body>
+    <div class="theme-toggle">
+        <button id="themeToggle" aria-label="Toggle dark mode">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <div class="app-layout">
+        <aside class="sidebar-container">
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <art-sidebar></art-sidebar>
+        </aside>
+        <!-- Page specific content -->
+        <div class="content-wrapper">
+            <main class="main-content generate-page">
+                <div class="suggestions-section">
+                    <h3>Suggestions</h3>
+                    <div class="suggestions-grid">
+                        <div class="suggestion-item"></div>
+                        <div class="suggestion-item"></div>
+                        <div class="suggestion-item"></div>
+                        <div class="suggestion-item"></div>
+                    </div>
+                </div>
+
+                <div class="prompt-section">
+                    <input type="text" id="promptInput" placeholder="Enter the prompt" class="prompt-input">
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
