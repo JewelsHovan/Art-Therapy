@@ -1,0 +1,88 @@
+/* Action Buttons */
+.action-button {
+    width: 100%;
+    padding: 20px;
+    font-size: 18px;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.action-button:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.action-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+    .action-button {
+        font-size: 16px;
+        padding: 16px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .action-button {
+        font-size: 15px;
+        padding: 14px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .action-button {
+        padding: 24px;
+        font-size: 20px;
+    }
+}
+
+/* Authentication Styles */
+.auth-container {
+    position: fixed;
+    top: 1rem;
+    right: 8rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-button {
+    padding: 8px 16px;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.auth-button:hover {
+    background-color: var(--button-hover);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
