@@ -3,29 +3,54 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
+import fs from 'fs';
+import https from 'https';
+import db from './src/database.js';
 
-// Configure dotenv to read .env file
+// Configure dotenv and basic setup
 dotenv.config();
-
-// Set up Express
 const app = express();
 const port = process.env.PORT || 3000;
-
-// Get directory name in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(express.json());
-app.use(express.static('public'));
 app.use(cors());
+app.use(express.static('public'));
+// Add uploads to static middleware
+app.use('/uploads', express.static('uploads'));
 
-// Serve static files
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads', 'images');
+fs.mkdirSync(uploadsDir, { recursive: true });
+
+// Basic routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Image generation endpoint
+// Helper function to download images
+function downloadImage(url, filepath) {
+    return new Promise((resolve, reject) => {
+        https.get(url, (response) => {
+            if (response.statusCode !== 200) {
+                reject(new Error(`Failed to download image: ${response.statusCode}`));
+                return;
+            }
+
+            const writeStream = fs.createWriteStream(filepath);
+            response.pipe(writeStream);
+
+            writeStream.on('finish', () => {
+                writeStream.close();
+                resolve();
+            });
+        }).on('error', reject);
+    });
+}
+
+// Modified image generation endpoint
 app.post('/api/generate-image', async (req, res) => {
     try {
         const { prompt } = req.body;
@@ -34,6 +59,7 @@ app.post('/api/generate-image', async (req, res) => {
             return res.status(400).json({ error: 'Prompt is required' });
         }
 
+        // Generate image with DALL-E
         const response = await fetch('https://api.openai.com/v1/images/generations', {
             method: 'POST',
             headers: {
@@ -55,20 +81,52 @@ app.post('/api/generate-image', async (req, res) => {
         }
 
         const data = await response.json();
-        res.json({ imageUrl: data.data[0].url });
+        const imageUrl = data.data[0].url;
+        
+        // Generate unique filename
+        const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
+        const localPath = path.join('uploads', 'images', filename);
+        const fullPath = path.join(__dirname, localPath);
+
+        // Download and save the image
+        await downloadImage(imageUrl, fullPath);
+
+        // Save to database
+        db.run(
+            'INSERT INTO images (prompt, file_path, dalle_url) VALUES (?, ?, ?)',
+            [prompt, localPath, imageUrl],
+            function(err) {
+                if (err) {
+                    console.error('Database error:', err);
+                    return res.status(500).json({ error: 'Failed to save image data' });
+                }
+                
+                // Return both the served image path and the database ID
+                res.json({ 
+                    imageUrl: `/uploads/images/${filename}`,
+                    id: this.lastID
+                });
+            }
+        );
+
     } catch (error) {
         console.error('Error generating image:', error);
         res.status(500).json({ error: error.message || 'Failed to generate image' });
     }
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: 'Something broke!' });
+// Add an endpoint to fetch saved images
+app.get('/api/images', (req, res) => {
+    db.all('SELECT * FROM images ORDER BY created_at DESC', [], (err, rows) => {
+        if (err) {
+            console.error('Error fetching images:', err);
+            return res.status(500).json({ error: 'Failed to fetch images' });
+        }
+        res.json(rows);
+    });
 });
 
 // Start server
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server running at http://localhost:${port}`);
 });
