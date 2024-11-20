@@ -25,22 +25,35 @@
             </button>
             <art-sidebar></art-sidebar>
         </aside>
-        <!-- Page specific content -->
+        
         <div class="content-wrapper">
             <main class="main-content generate-page">
-                <div class="generate-controls">
-                    <input type="text" id="promptInput" placeholder="Enter your prompt...">
-                    <button id="generateButton">Generate</button>
+                <div class="generated-images">
+                    <h3 class="section-header">Your Creations</h3>
+                    <div class="images-timeline">
+                        <div class="empty-state">
+                            <i class="fas fa-magic"></i>
+                            <p>Your generated images will appear here</p>
+                            <p class="subtitle">Try one of the prompts below to get started!</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="suggestions-section">
-                    <h3>Suggestions</h3>
-                    <div class="suggestions-grid">
-                        <div class="suggestion-item"></div>
-                        <div class="suggestion-item"></div>
-                        <div class="suggestion-item"></div>
-                        <div class="suggestion-item"></div>
+                <div class="prompt-suggestions">
+                    <h3>Try these prompts</h3>
+                    <div class="prompt-chips">
+                        <button class="prompt-chip">A serene landscape with cherry blossoms</button>
+                        <button class="prompt-chip">Abstract emotions in vibrant colors</button>
+                        <button class="prompt-chip">Peaceful zen garden at sunset</button>
+                        <button class="prompt-chip">Underwater city with bioluminescent life</button>
                     </div>
+                </div>
+
+                <div class="prompt-section">
+                    <input type="text" id="promptInput" class="prompt-input" placeholder="Enter your prompt...">
+                    <button id="generateButton" class="generate-button">
+                        <i class="fas fa-magic"></i> Generate
+                    </button>
                 </div>
             </main>
         </div>

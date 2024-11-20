@@ -3,7 +3,16 @@ import { generateImage } from './imageGenerator.js';
 document.addEventListener('DOMContentLoaded', () => {
     const promptInput = document.getElementById('promptInput');
     const generateButton = document.getElementById('generateButton');
-    const suggestionsGrid = document.querySelector('.suggestions-grid');
+    const imagesTimeline = document.querySelector('.images-timeline');
+    const promptChips = document.querySelectorAll('.prompt-chip');
+
+    // Handle prompt chip clicks
+    promptChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            promptInput.value = chip.textContent;
+            generateButton.click();
+        });
+    });
 
     generateButton.addEventListener('click', async () => {
         const prompt = promptInput.value.trim();
@@ -15,29 +24,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const imageUrl = await generateImage(prompt);
             
-            // Create a new suggestion item with the generated image
-            const suggestionItem = document.createElement('div');
-            suggestionItem.className = 'suggestion-item generated';
+            // Create new timeline item
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'generated-item';
             
-            // Add loading state while image loads
-            suggestionItem.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>';
+            // Add loading state
+            timelineItem.innerHTML = `
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            `;
             
-            // Create and load the image
+            // Insert at the top of the timeline
+            imagesTimeline.insertBefore(timelineItem, imagesTimeline.firstChild);
+            
+            // Load the image
             const img = new Image();
             img.onload = () => {
-                suggestionItem.innerHTML = ''; // Remove loading spinner
-                suggestionItem.style.backgroundImage = `url(${imageUrl})`;
-                suggestionItem.style.backgroundSize = 'cover';
-                suggestionItem.style.backgroundPosition = 'center';
+                timelineItem.innerHTML = `
+                    <img src="${imageUrl}" alt="${prompt}">
+                    <div class="prompt-text">${prompt}</div>
+                    <div class="timestamp">${new Date().toLocaleString()}</div>
+                `;
             };
             img.onerror = () => {
-                suggestionItem.innerHTML = '<div class="error-message">Failed to load image</div>';
+                timelineItem.innerHTML = '<div class="error-message">Failed to load image</div>';
             };
             img.src = imageUrl;
-
-            // Add the new image to the grid
-            const firstItem = suggestionsGrid.firstChild;
-            suggestionsGrid.insertBefore(suggestionItem, firstItem);
 
         } catch (error) {
             console.error('Failed to generate image:', error);
