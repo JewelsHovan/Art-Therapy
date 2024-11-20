@@ -73,13 +73,18 @@
     background: var(--card-bg);
     padding: 2rem;
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 800px;
     margin: 2rem auto;
     display: flex;
     gap: 1rem;
     align-items: center;
+}
+
+.dark-theme .prompt-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
 }
 
 .prompt-input {
@@ -90,6 +95,16 @@
     font-size: 1.2rem;
     padding: 1rem 1.5rem;
     border-radius: 12px;
+    color: var(--input-text);
+}
+
+.dark-theme .prompt-input {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-color);
+}
+
+.dark-theme .prompt-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .prompt-input:focus {
@@ -275,6 +290,11 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.dark-theme .generated-item {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+}
+
 .generated-item img {
     width: 100%;
     border-radius: 8px;
@@ -330,6 +350,11 @@
     background: var(--card-bg);
     border-radius: 16px;
     margin: 1rem 0;
+}
+
+.dark-theme .empty-state {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
 }
 
 .empty-state i {

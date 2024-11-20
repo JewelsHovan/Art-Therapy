@@ -205,6 +205,29 @@ class Sidebar extends HTMLElement {
                     border-radius: 8px;
                     margin-bottom: 10px;
                 }
+
+                :host-context(body.dark-theme) .sidebar {
+                    background-color: var(--sidebar-bg-dark, #1a1a1a);
+                }
+
+                :host-context(body.dark-theme) .menu-item {
+                    background-color: var(--menu-item-bg-dark, #2d2d2d);
+                    border-color: var(--border-color-dark, rgba(255, 255, 255, 0.1));
+                }
+
+                :host-context(body.dark-theme) .session-info h3,
+                :host-context(body.dark-theme) .session-info p {
+                    color: var(--text-color-dark, #ffffff);
+                }
+
+                :host-context(body.dark-theme) .timestamp {
+                    color: var(--timestamp-color-dark, #999999);
+                    border-top-color: var(--border-color-dark, rgba(255, 255, 255, 0.1));
+                }
+
+                :host-context(body.dark-theme) .menu-item:hover {
+                    border-color: var(--primary-blue, #7b9ed9);
+                }
             </style>
             <aside class="sidebar">
                 <div class="header" onclick="window.location.href='index.html'">
