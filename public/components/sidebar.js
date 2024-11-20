@@ -2,11 +2,67 @@ class Sidebar extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
+        this.images = [];
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        await this.fetchImages();
         this.render();
         this.setupEventListeners();
+    }
+
+    async fetchImages() {
+        try {
+            const response = await fetch('/api/images');
+            if (!response.ok) throw new Error('Failed to fetch images');
+            this.images = await response.json();
+        } catch (error) {
+            console.error('Error fetching images:', error);
+            this.images = [];
+        }
+    }
+
+    formatTimestamp(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        // If today
+        if (date.toDateString() === now.toDateString()) {
+            return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
+        // If yesterday
+        else if (date.toDateString() === yesterday.toDateString()) {
+            return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
+        // Otherwise show date
+        else {
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+    }
+
+    generateMenuItems() {
+        return this.images.map(image => `
+            <div class="menu-item" data-image-id="${image.id}">
+                <div class="session-info">
+                    <div class="image-preview" style="background-image: url('${image.file_path}')"></div>
+                    <h3>${this.truncateText(image.prompt, 30)}</h3>
+                    <p>${this.truncateText(image.prompt, 60)}</p>
+                    <span class="timestamp">${this.formatTimestamp(image.created_at)}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    truncateText(text, maxLength) {
+        return text.length > maxLength 
+            ? text.substring(0, maxLength) + '...' 
+            : text;
     }
 
     render() {
@@ -58,6 +114,7 @@ class Sidebar extends HTMLElement {
                     flex-direction: column;
                     gap: 12px;
                     overflow-y: auto;
+                    max-height: calc(100vh - 100px);
                 }
 
                 .menu-item {
@@ -139,6 +196,15 @@ class Sidebar extends HTMLElement {
                         padding-right: max(20px, env(safe-area-inset-right));
                     }
                 }
+
+                .image-preview {
+                    width: 100%;
+                    height: 120px;
+                    background-size: cover;
+                    background-position: center;
+                    border-radius: 8px;
+                    margin-bottom: 10px;
+                }
             </style>
             <aside class="sidebar">
                 <div class="header" onclick="window.location.href='index.html'">
@@ -146,48 +212,11 @@ class Sidebar extends HTMLElement {
                     <p>Your creative journey</p>
                 </div>
                 <nav class="menu">
-                    <div class="menu-item">
-                        <div class="session-info">
-                            <h3>Abstract Landscape</h3>
-                            <p>Generated artwork with mountain themes</p>
-                            <span class="timestamp">Today at 2:30 PM</span>
+                    ${this.images.length ? this.generateMenuItems() : `
+                        <div class="empty-state">
+                            <p>No artwork generated yet</p>
                         </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="session-info">
-                            <h3>Portrait Study</h3>
-                            <p>Edited portrait with vibrant colors</p>
-                            <span class="timestamp">Today at 11:45 AM</span>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="session-info">
-                            <h3>Nature Scene</h3>
-                            <p>Generated forest artwork</p>
-                            <span class="timestamp">Yesterday at 4:15 PM</span>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="session-info">
-                            <h3>Urban Sketch</h3>
-                            <p>City landscape with neon effects</p>
-                            <span class="timestamp">Yesterday at 2:00 PM</span>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="session-info">
-                            <h3>Abstract Patterns</h3>
-                            <p>Generated geometric patterns</p>
-                            <span class="timestamp">Jul 20, 2023</span>
-                        </div>
-                    </div>
-                    <div class="menu-item">
-                        <div class="session-info">
-                            <h3>Watercolor Style</h3>
-                            <p>Edited artwork with watercolor effects</p>
-                            <span class="timestamp">Jul 19, 2023</span>
-                        </div>
-                    </div>
+                    `}
                 </nav>
             </aside>
         `;
@@ -197,6 +226,14 @@ class Sidebar extends HTMLElement {
         window.addEventListener('custom-toggle-sidebar', () => {
             const sidebar = this.shadowRoot.querySelector('.sidebar');
             sidebar.classList.toggle('active');
+        });
+
+        const menuItems = this.shadowRoot.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const imageId = item.dataset.imageId;
+                console.log('Clicked image:', imageId);
+            });
         });
     }
 }

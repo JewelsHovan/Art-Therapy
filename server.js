@@ -117,13 +117,24 @@ app.post('/api/generate-image', async (req, res) => {
 
 // Add an endpoint to fetch saved images
 app.get('/api/images', (req, res) => {
-    db.all('SELECT * FROM images ORDER BY created_at DESC', [], (err, rows) => {
-        if (err) {
-            console.error('Error fetching images:', err);
-            return res.status(500).json({ error: 'Failed to fetch images' });
+    db.all(
+        'SELECT id, prompt, file_path, created_at FROM images ORDER BY created_at DESC', 
+        [], 
+        (err, rows) => {
+            if (err) {
+                console.error('Error fetching images:', err);
+                return res.status(500).json({ error: 'Failed to fetch images' });
+            }
+            
+            // Transform the file paths to be relative to the public directory
+            const images = rows.map(row => ({
+                ...row,
+                file_path: `/${row.file_path}` // Add leading slash for proper URL formatting
+            }));
+            
+            res.json(images);
         }
-        res.json(rows);
-    });
+    );
 });
 
 // Start server
