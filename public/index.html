@@ -5,15 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Art Therapy Tool</title>
 
-    <!-- Firebase SDK -->
-    <script defer src="/__/firebase/11.0.1/firebase-app-compat.js"></script>
-    <script defer src="/__/firebase/11.0.1/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/11.0.1/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/11.0.1/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/11.0.1/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/11.0.1/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
     <!-- Your existing styles -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="css/index.css">
@@ -55,19 +46,6 @@
     </div>
 
     <!-- Scripts -->
-    <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/common.js"></script>
-
-    <!-- Firebase initialization script -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        try {
-          let app = firebase.app();
-          console.log('Firebase SDK initialized successfully');
-        } catch (e) {
-          console.error('Error loading the Firebase SDK:', e);
-        }
-      });
-    </script>
   </body>
 </html>

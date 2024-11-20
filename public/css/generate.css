@@ -42,6 +42,26 @@
     transform: scale(1.02);
 }
 
+.suggestion-item.generated {
+    min-height: 200px;
+    position: relative;
+}
+
+.loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.error-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: red;
+}
+
 /* Prompt Section */
 .prompt-section {
     width: 100%;
@@ -53,6 +73,9 @@
     left: 55%;
     transform: translateX(-50%);
     z-index: 10;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 .prompt-input {
@@ -76,6 +99,25 @@
 .prompt-input:focus {
     outline: none;
     background-color: #E2E2E2;
+}
+
+.generate-button {
+    padding: 25px 40px;
+    font-size: 1.4rem;
+    border: none;
+    border-radius: 50px;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.generate-button:hover {
+    background-color: var(--button-hover);
+    transform: scale(1.02);
 }
 
 /* Media Queries */
@@ -107,6 +149,11 @@
         font-size: 1.2rem;
         padding: 20px 30px;
     }
+
+    .generate-button {
+        padding: 20px 30px;
+        font-size: 1.2rem;
+    }
 }
 
 @media screen and (max-width: 480px) {
@@ -129,4 +176,24 @@
         padding: 18px 25px;
         font-size: 1.1rem;
     }
+
+    .generate-button {
+        padding: 18px 25px;
+        font-size: 1.1rem;
+    }
+}
+
+.generate-controls {
+    margin-bottom: 20px;
+}
+
+#promptInput {
+    padding: 8px;
+    margin-right: 10px;
+    width: 300px;
+}
+
+#generateButton {
+    padding: 8px 16px;
+    cursor: pointer;
 }
