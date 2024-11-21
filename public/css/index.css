@@ -1,6 +1,7 @@
 /* Action Buttons */
 .action-button {
     width: 100%;
+    max-width: 450px; /* Limit button width for better UX */
     padding: 20px;
     font-size: 18px;
     background-color: var(--button-bg);
@@ -26,6 +27,19 @@
     box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
+/* Index Page Specific Styles */
+.main-content.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 4rem); /* Account for padding */
+    justify-content: center;
+}
+
 /* Media Queries */
 @media screen and (max-width: 768px) {
     .action-button {
@@ -45,6 +59,20 @@
     .action-button {
         padding: 24px;
         font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .main-content.centered-content {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .main-content.centered-content {
+        padding: 1rem;
+        gap: 1rem;
     }
 }
 

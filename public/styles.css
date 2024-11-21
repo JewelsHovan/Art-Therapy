@@ -83,16 +83,6 @@ body {
     padding: 2rem;
 }
 
-/* Add this new section for shared content styles */
-.main-content.centered-content {
-    position: absolute;
-    top: 50%;
-    left: 60%;
-    transform: translate(-50%, -50%);
-    max-width: 450px;
-    gap: 1rem;
-}
-
 /* Theme Toggle */
 .theme-toggle {
     position: fixed;
