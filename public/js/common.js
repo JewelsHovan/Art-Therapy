@@ -26,7 +26,17 @@ function updateThemeIcon(isDark) {
     icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
 }
 
+// Sidebar state management
+function initializeSidebarState() {
+    const contentWrapper = document.querySelector('.content-wrapper');
+    
+    document.addEventListener('sidebar-toggle', (event) => {
+        contentWrapper.classList.toggle('sidebar-closed', !event.detail.isOpen);
+    });
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
+    initializeSidebarState();
 });

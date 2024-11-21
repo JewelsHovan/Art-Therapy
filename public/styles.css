@@ -2,6 +2,7 @@
 :root {
     /* Light theme variables */
     --sidebar-width: 250px;
+    --sidebar-width-collapsed: 0px;
     --primary-blue: #7b9ed9;
     --secondary-blue: #b8d1f6;
     --background: #ffffff;
@@ -64,9 +65,14 @@ body {
     max-width: calc(100vw - var(--sidebar-width));
     width: 100%;
     min-height: 100vh;
-    transition: margin-left var(--sidebar-transition);
+    transition: margin-left 0.3s ease, max-width 0.3s ease;
     padding: 20px;
     position: relative;
+}
+
+.content-wrapper.sidebar-closed {
+    margin-left: var(--sidebar-width-collapsed);
+    max-width: calc(100vw - var(--sidebar-width-collapsed));
 }
 
 .main-content {

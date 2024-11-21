@@ -90,6 +90,11 @@ class Sidebar extends HTMLElement {
         
         sidebar.classList.toggle('closed', !this.isOpen);
         toggleButton.classList.toggle('closed', !this.isOpen);
+
+        // Dispatch custom event for layout updates
+        document.dispatchEvent(new CustomEvent('sidebar-toggle', {
+            detail: { isOpen: this.isOpen }
+        }));
     }
 
     render() {
