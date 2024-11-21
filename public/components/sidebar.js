@@ -3,6 +3,7 @@ class Sidebar extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.images = [];
+        this.isOpen = true; // Track sidebar state
     }
 
     async connectedCallback() {
@@ -51,7 +52,7 @@ class Sidebar extends HTMLElement {
             <div class="menu-item" data-image-id="${image.id}">
                 <div class="session-info">
                     <div class="image-preview" style="background-image: url('${image.file_path}')"></div>
-                    <h3>${this.truncateText(image.prompt, 30)}</h3>
+                    <h3>${this.truncateText(image.prompt, 50)}</h3>
                     <p>${this.truncateText(image.prompt, 60)}</p>
                     <span class="timestamp">${this.formatTimestamp(image.created_at)}</span>
                 </div>
@@ -63,6 +64,32 @@ class Sidebar extends HTMLElement {
         return text.length > maxLength 
             ? text.substring(0, maxLength) + '...' 
             : text;
+    }
+
+    setupEventListeners() {
+        // Get the toggle button from shadow DOM
+        const toggleButton = this.shadowRoot.querySelector('.sidebar-toggle');
+        toggleButton.addEventListener('click', () => this.toggleSidebar());
+
+        // Listen for custom events from outside
+        window.addEventListener('custom-toggle-sidebar', () => this.toggleSidebar());
+
+        const menuItems = this.shadowRoot.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const imageId = item.dataset.imageId;
+                console.log('Clicked image:', imageId);
+            });
+        });
+    }
+
+    toggleSidebar() {
+        this.isOpen = !this.isOpen;
+        const sidebar = this.shadowRoot.querySelector('.sidebar');
+        const toggleButton = this.shadowRoot.querySelector('.sidebar-toggle');
+        
+        sidebar.classList.toggle('closed', !this.isOpen);
+        toggleButton.classList.toggle('closed', !this.isOpen);
     }
 
     render() {
@@ -81,183 +108,177 @@ class Sidebar extends HTMLElement {
                     height: 100vh;
                     left: 0;
                     top: 0;
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    transition: transform 0.3s ease;
                     z-index: 999;
                     border-right: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
-                    padding: 0;
                 }
 
-                .header {
-                    padding: 24px 20px;
-                    background-color: var(--primary-blue, #7b9ed9);
-                    margin-bottom: 20px;
+                .sidebar.closed {
+                    transform: translateX(-100%);
+                }
+
+                .sidebar-toggle {
+                    position: absolute;
+                    right: -40px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 40px;
+                    height: 40px;
+                    background: var(--primary-blue, #7b9ed9);
+                    border: none;
+                    border-radius: 0 4px 4px 0;
                     cursor: pointer;
-                    width: 100%;
-                    box-sizing: border-box;
-                }
-
-                .header h1 {
-                    font-size: 1.5rem;
-                    margin-bottom: 8px;
-                    color: white;
-                    font-weight: 600;
-                }
-
-                .header p {
-                    font-size: 0.9rem;
-                    color: rgba(255, 255, 255, 0.8);
-                }
-
-                .menu {
-                    padding: 0 15px;
                     display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                    overflow-y: auto;
-                    max-height: calc(100vh - 100px);
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+                    transition: background-color 0.3s ease;
                 }
 
-                .menu-item {
-                    background-color: var(--menu-item-bg, #ffffff);
-                    border-radius: 12px;
-                    padding: 16px;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-                    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+                .sidebar-toggle:hover {
+                    background: var(--primary-blue-hover, #6b8ec9);
                 }
 
-                .menu-item:hover {
-                    transform: translateX(5px);
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                    border-color: var(--primary-blue, #7b9ed9);
+                .sidebar-toggle::after {
+                    content: "◀";
+                    font-size: 18px;
+                    transition: transform 0.3s ease;
                 }
 
-                .session-info h3 {
-                    font-size: 1rem;
-                    margin-bottom: 6px;
-                    color: var(--text-color, #333333);
-                    font-weight: 600;
+                .sidebar-toggle.closed::after {
+                    transform: rotate(180deg);
                 }
 
-                .session-info p {
-                    font-size: 0.85rem;
-                    color: var(--text-color, #333333);
-                    opacity: 0.8;
-                    margin-bottom: 10px;
-                    line-height: 1.4;
-                }
-
-                .timestamp {
-                    font-size: 0.75rem;
-                    color: var(--timestamp-color, #666666);
-                    display: block;
-                    padding-top: 8px;
-                    border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
-                }
-
-                @media screen and (max-width: 768px) {
+                @media (max-width: 768px) {
                     .sidebar {
-                        transform: translateX(-100%);
-                        box-shadow: none;
+                        width: 100%;
+                        max-width: 300px;
                     }
-
-                    .sidebar.active {
-                        transform: translateX(0);
-                        box-shadow: 5px 0 15px rgba(0,0,0,0.2);
-                    }
-
-                    .menu {
-                        padding: 15px;
-                        gap: 12px;
-                    }
-
-                    .header {
-                        padding: 20px 15px;
-                        margin-bottom: 15px;
+                    
+                    .sidebar-toggle {
+                        width: 32px;
+                        height: 32px;
+                        right: -32px;
                     }
                 }
 
-                @media screen and (max-width: 320px) {
-                    .menu {
-                        padding: 12px;
-                        gap: 10px;
-                    }
-
-                    .header {
-                        padding: 15px 12px;
-                        margin-bottom: 12px;
-                    }
-                }
-
-                @supports (padding: max(0px)) {
-                    .sidebar {
-                        padding-left: max(20px, env(safe-area-inset-left));
-                        padding-right: max(20px, env(safe-area-inset-right));
-                    }
-                }
-
-                .image-preview {
-                    width: 100%;
-                    height: 120px;
-                    background-size: cover;
-                    background-position: center;
-                    border-radius: 8px;
-                    margin-bottom: 10px;
-                }
-
-                :host-context(body.dark-theme) .sidebar {
-                    background-color: var(--sidebar-bg-dark, #1a1a1a);
-                }
-
-                :host-context(body.dark-theme) .menu-item {
-                    background-color: var(--menu-item-bg-dark, #2d2d2d);
-                    border-color: var(--border-color-dark, rgba(255, 255, 255, 0.1));
-                }
-
-                :host-context(body.dark-theme) .session-info h3,
-                :host-context(body.dark-theme) .session-info p {
-                    color: var(--text-color-dark, #ffffff);
-                }
-
-                :host-context(body.dark-theme) .timestamp {
-                    color: var(--timestamp-color-dark, #999999);
-                    border-top-color: var(--border-color-dark, rgba(255, 255, 255, 0.1));
-                }
-
-                :host-context(body.dark-theme) .menu-item:hover {
-                    border-color: var(--primary-blue, #7b9ed9);
-                }
+                ${this.getExistingStyles()}
             </style>
-            <aside class="sidebar">
-                <div class="header" onclick="window.location.href='index.html'">
-                    <h1>Art Sessions</h1>
-                    <p>Your creative journey</p>
+            <div class="sidebar">
+                <div class="header" onclick="window.location.href='/index.html'">
+                    <h1>Art Therapy</h1>
                 </div>
-                <nav class="menu">
+                <div class="menu-items">
                     ${this.images.length ? this.generateMenuItems() : `
                         <div class="empty-state">
                             <p>No artwork generated yet</p>
                         </div>
                     `}
-                </nav>
-            </aside>
+                </div>
+                <button class="sidebar-toggle" aria-label="Toggle Sidebar"></button>
+            </div>
         `;
     }
 
-    setupEventListeners() {
-        window.addEventListener('custom-toggle-sidebar', () => {
-            const sidebar = this.shadowRoot.querySelector('.sidebar');
-            sidebar.classList.toggle('active');
-        });
+    getExistingStyles() {
+        return `
+            .header {
+                padding: 24px 20px;
+                background-color: var(--primary-blue, #7b9ed9);
+                margin-bottom: 20px;
+                cursor: pointer;
+                width: 100%;
+                box-sizing: border-box;
+            }
 
-        const menuItems = this.shadowRoot.querySelectorAll('.menu-item');
-        menuItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const imageId = item.dataset.imageId;
-                console.log('Clicked image:', imageId);
-            });
-        });
+            .header:hover {
+                background-color: var(--primary-blue-hover, #6b8ec9);
+            }
+
+            .header h1 {
+                color: white;
+                margin: 0;
+                font-size: 1.5rem;
+            }
+
+            .menu-items {
+                overflow-y: auto;
+                flex-grow: 1;
+                padding: 0 10px;
+            }
+
+            .menu-item {
+                background-color: var(--menu-item-bg, #ffffff);
+                border-radius: 12px;
+                padding: 16px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+            }
+
+            .menu-item:hover {
+                transform: translateX(5px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border-color: var(--primary-blue, #7b9ed9);
+            }
+
+            .session-info h3 {
+                font-size: 1rem;
+                margin-bottom: 6px;
+                color: var(--text-color, #333333);
+                font-weight: 600;
+            }
+
+            .session-info p {
+                font-size: 0.85rem;
+                color: var(--text-color, #333333);
+                opacity: 0.8;
+                margin-bottom: 10px;
+                line-height: 1.4;
+            }
+
+            .timestamp {
+                font-size: 0.75rem;
+                color: var(--timestamp-color, #666666);
+                display: block;
+                padding-top: 8px;
+                border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+            }
+
+            .image-preview {
+                width: 100%;
+                height: 120px;
+                background-size: cover;
+                background-position: center;
+                border-radius: 8px;
+                margin-bottom: 10px;
+            }
+
+            :host-context(body.dark-theme) .sidebar {
+                background-color: var(--sidebar-bg-dark, #1a1a1a);
+            }
+
+            :host-context(body.dark-theme) .menu-item {
+                background-color: var(--menu-item-bg-dark, #2d2d2d);
+                border-color: var(--border-color-dark, rgba(255, 255, 255, 0.1));
+            }
+
+            :host-context(body.dark-theme) .session-info h3,
+            :host-context(body.dark-theme) .session-info p {
+                color: var(--text-color-dark, #ffffff);
+            }
+
+            :host-context(body.dark-theme) .timestamp {
+                color: var(--timestamp-color-dark, #999999);
+                border-top-color: var(--border-color-dark, rgba(255, 255, 255, 0.1));
+            }
+
+            :host-context(body.dark-theme) .menu-item:hover {
+                border-color: var(--primary-blue, #7b9ed9);
+            }
+        `;
     }
 }
 

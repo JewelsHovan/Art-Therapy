@@ -26,18 +26,7 @@ function updateThemeIcon(isDark) {
     icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
 }
 
-// Mobile sidebar management
-function initializeMobileMenu() {
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    
-    mobileMenuToggle.addEventListener('click', () => {
-        // Dispatch custom event that sidebar.js listens for
-        window.dispatchEvent(new CustomEvent('custom-toggle-sidebar'));
-    });
-}
-
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
-    initializeMobileMenu();
 });
