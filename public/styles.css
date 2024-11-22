@@ -61,7 +61,7 @@ body {
 }
 
 .content-wrapper {
-    margin-left: var(--sidebar-width);
+    margin-left: calc(var(--sidebar-width) - 15px);
     max-width: calc(100vw - var(--sidebar-width));
     width: 100%;
     min-height: 100vh;
