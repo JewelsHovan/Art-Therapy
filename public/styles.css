@@ -89,6 +89,8 @@ body {
     top: 20px;
     right: 20px;
     z-index: 1000;
+    display: flex;
+    gap: 10px;
 }
 
 .theme-toggle button {
@@ -167,4 +169,120 @@ body {
         padding-left: max(20px, env(safe-area-inset-left));
         padding-right: max(20px, env(safe-area-inset-right));
     }
+}
+
+/* Settings styles */
+.settings-button {
+    background-color: var(--toggle-bg) !important;
+    color: var(--toggle-color) !important;
+    width: 44px !important;
+    height: 44px !important;
+    margin-right: 0 !important;
+}
+
+.settings-button:hover {
+    transform: scale(1.1) !important;
+}
+
+.settings-button i {
+    transition: transform 0.3s ease;
+}
+
+.settings-button:hover i {
+    transform: rotate(30deg);
+}
+
+.settings-panel {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    z-index: 1000;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.settings-panel.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+.settings-content {
+    padding: 16px;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-header h3 {
+    margin: 0;
+    color: var(--text-color);
+}
+
+.close-settings {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.7;
+}
+
+.close-settings:hover {
+    opacity: 1;
+}
+
+.settings-section {
+    margin-bottom: 20px;
+}
+
+.settings-section h4 {
+    margin: 0 0 8px;
+    color: var(--text-color);
+}
+
+#languageSelect {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--input-text);
+}
+
+.font-size-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.font-size-btn {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--input-text);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.font-size-btn:hover {
+    background: var(--button-hover);
+    color: white;
+}
+
+.font-size-btn.active {
+    background: var(--button-bg);
+    color: white;
 }

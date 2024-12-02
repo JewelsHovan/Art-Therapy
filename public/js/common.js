@@ -22,7 +22,7 @@ function initializeTheme() {
 }
 
 function updateThemeIcon(isDark) {
-    const icon = document.querySelector('.theme-toggle i');
+    const icon = document.querySelector('#themeToggle i');
     icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
 }
 
@@ -35,8 +35,38 @@ function initializeSidebarState() {
     });
 }
 
+// Settings Panel Management
+function initializeSettings() {
+    const settingsButton = document.getElementById('settingsButton');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const closeSettings = document.querySelector('.close-settings');
+
+    // Toggle settings panel
+    settingsButton.addEventListener('click', () => {
+        settingsPanel.classList.toggle('hidden');
+    });
+
+    // Close settings panel
+    closeSettings.addEventListener('click', () => {
+        settingsPanel.classList.add('hidden');
+    });
+
+    // Close settings when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!settingsPanel.contains(event.target) && 
+            !settingsButton.contains(event.target) && 
+            !settingsPanel.classList.contains('hidden')) {
+            settingsPanel.classList.add('hidden');
+        }
+    });
+
+    // Initialize settings panel state
+    settingsPanel.classList.add('hidden');
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
     initializeSidebarState();
+    initializeSettings();
 });

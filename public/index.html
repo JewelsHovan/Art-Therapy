@@ -41,9 +41,39 @@
     </div>
 
     <div class="theme-toggle">
+        <button id="settingsButton" class="settings-button" aria-label="Open settings">
+            <i class="fas fa-cog"></i>
+        </button>
         <button id="themeToggle" aria-label="Toggle dark mode">
             <i class="fas fa-moon"></i>
         </button>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settingsPanel" class="settings-panel hidden">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h3>Settings</h3>
+                <button class="close-settings" aria-label="Close settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="settings-section">
+                <h4>Language</h4>
+                <select id="languageSelect" aria-label="Select language">
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                </select>
+            </div>
+            <div class="settings-section">
+                <h4>Font Size</h4>
+                <div class="font-size-controls">
+                    <button class="font-size-btn" data-size="small">Small</button>
+                    <button class="font-size-btn" data-size="medium">Medium</button>
+                    <button class="font-size-btn" data-size="large">Large</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="app-layout">
