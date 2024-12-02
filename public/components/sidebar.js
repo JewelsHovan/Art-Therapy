@@ -3,23 +3,80 @@ class Sidebar extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.images = [];
-        this.isOpen = true; // Track sidebar state
+        this.isOpen = true;
+        this.isLoading = true;
+        this.error = null;
+        this.page = 1;
+        this.itemsPerPage = 10;
+        this.hasMore = true;
+        this.observer = null;
     }
 
     async connectedCallback() {
+        this.setupIntersectionObserver();
         await this.fetchImages();
         this.render();
         this.setupEventListeners();
     }
 
+    setupIntersectionObserver() {
+        this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !this.isLoading && this.hasMore) {
+                    this.loadMoreImages();
+                }
+            });
+        }, { threshold: 0.5 });
+    }
+
     async fetchImages() {
+        this.isLoading = true;
+        this.error = null;
+        this.render();
+
         try {
-            const response = await fetch('/api/images');
-            if (!response.ok) throw new Error('Failed to fetch images');
-            this.images = await response.json();
+            const response = await fetch(`/api/images?page=${this.page}&limit=${this.itemsPerPage}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch images: ${response.statusText}`);
+            }
+            const data = await response.json();
+            
+            // Append new images to existing ones
+            this.images = this.page === 1 ? data.images : [...this.images, ...data.images];
+            this.hasMore = data.hasMore || false;
+            
+            if (this.hasMore) {
+                this.page++;
+            }
         } catch (error) {
             console.error('Error fetching images:', error);
+            this.error = error.message;
             this.images = [];
+        } finally {
+            this.isLoading = false;
+            this.render();
+            this.observeLastItem();
+        }
+    }
+
+    async loadMoreImages() {
+        if (!this.isLoading && this.hasMore) {
+            await this.fetchImages();
+        }
+    }
+
+    observeLastItem() {
+        if (this.hasMore) {
+            const lastItem = this.shadowRoot.querySelector('.menu-item:last-child');
+            if (lastItem) {
+                this.observer.observe(lastItem);
+            }
+        }
+    }
+
+    disconnectedCallback() {
+        if (this.observer) {
+            this.observer.disconnect();
         }
     }
 
@@ -48,12 +105,37 @@ class Sidebar extends HTMLElement {
     }
 
     generateMenuItems() {
+        if (this.isLoading) {
+            return `
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading images...</p>
+                </div>
+            `;
+        }
+
+        if (this.error) {
+            return `
+                <div class="error-state">
+                    <p>Error: ${this.error}</p>
+                    <button class="retry-button">Retry</button>
+                </div>
+            `;
+        }
+
+        if (this.images.length === 0) {
+            return `
+                <div class="empty-state">
+                    <p>No images found</p>
+                </div>
+            `;
+        }
+
         return this.images.map(image => `
             <div class="menu-item" data-image-id="${image.id}">
                 <div class="session-info">
                     <div class="image-preview" style="background-image: url('${image.file_path}')"></div>
                     <h3>${this.truncateText(image.prompt, 50)}</h3>
-                    <p>${this.truncateText(image.prompt, 60)}</p>
                     <span class="timestamp">${this.formatTimestamp(image.created_at)}</span>
                 </div>
             </div>
@@ -67,12 +149,16 @@ class Sidebar extends HTMLElement {
     }
 
     setupEventListeners() {
-        // Get the toggle button from shadow DOM
         const toggleButton = this.shadowRoot.querySelector('.sidebar-toggle');
         toggleButton.addEventListener('click', () => this.toggleSidebar());
 
-        // Listen for custom events from outside
         window.addEventListener('custom-toggle-sidebar', () => this.toggleSidebar());
+
+        // Add retry button listener
+        const retryButton = this.shadowRoot.querySelector('.retry-button');
+        if (retryButton) {
+            retryButton.addEventListener('click', () => this.fetchImages());
+        }
 
         const menuItems = this.shadowRoot.querySelectorAll('.menu-item');
         menuItems.forEach(item => {
@@ -169,17 +255,47 @@ class Sidebar extends HTMLElement {
                 }
 
                 ${this.getExistingStyles()}
+                .loading-state, .error-state, .empty-state {
+                    padding: 20px;
+                    text-align: center;
+                    color: #666;
+                }
+
+                .loading-spinner {
+                    width: 30px;
+                    height: 30px;
+                    border: 3px solid #f3f3f3;
+                    border-top: 3px solid #3498db;
+                    border-radius: 50%;
+                    margin: 0 auto 10px;
+                    animation: spin 1s linear infinite;
+                }
+
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+
+                .retry-button {
+                    margin-top: 10px;
+                    padding: 8px 16px;
+                    background-color: #3498db;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+
+                .retry-button:hover {
+                    background-color: #2980b9;
+                }
             </style>
             <div class="sidebar">
                 <div class="header" onclick="window.location.href='/index.html'">
                     <h1>Art Therapy</h1>
                 </div>
                 <div class="menu-items">
-                    ${this.images.length ? this.generateMenuItems() : `
-                        <div class="empty-state">
-                            <p>No artwork generated yet</p>
-                        </div>
-                    `}
+                    ${this.generateMenuItems()}
                 </div>
                 <button class="sidebar-toggle" aria-label="Toggle Sidebar"></button>
             </div>

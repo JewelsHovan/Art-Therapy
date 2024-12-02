@@ -117,24 +117,53 @@ app.post('/api/generate-image', async (req, res) => {
 
 // Add an endpoint to fetch saved images
 app.get('/api/images', (req, res) => {
-    db.all(
-        'SELECT id, prompt, file_path, created_at FROM images ORDER BY created_at DESC', 
-        [], 
-        (err, rows) => {
-            if (err) {
-                console.error('Error fetching images:', err);
-                return res.status(500).json({ error: 'Failed to fetch images' });
-            }
-            
-            // Transform the file paths to be relative to the public directory
-            const images = rows.map(row => ({
-                ...row,
-                file_path: `/${row.file_path}` // Add leading slash for proper URL formatting
-            }));
-            
-            res.json(images);
+    // Get pagination parameters from query string
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    // First, get total count of images
+    db.get('SELECT COUNT(*) as total FROM images', [], (err, countRow) => {
+        if (err) {
+            console.error('Error counting images:', err);
+            return res.status(500).json({ error: 'Failed to fetch images' });
         }
-    );
+
+        const total = countRow.total;
+
+        // Then fetch paginated results
+        db.all(
+            `SELECT id, prompt, file_path, created_at 
+             FROM images 
+             ORDER BY created_at DESC 
+             LIMIT ? OFFSET ?`, 
+            [limit, offset], 
+            (err, rows) => {
+                if (err) {
+                    console.error('Error fetching images:', err);
+                    return res.status(500).json({ error: 'Failed to fetch images' });
+                }
+                
+                // Transform the file paths to be relative to the public directory
+                const images = rows.map(row => ({
+                    ...row,
+                    file_path: `/${row.file_path}` // Add leading slash for proper URL formatting
+                }));
+                
+                // Calculate if there are more images
+                const hasMore = offset + rows.length < total;
+                
+                // Return paginated results with metadata
+                res.json({
+                    images,
+                    hasMore,
+                    total,
+                    currentPage: page,
+                    totalPages: Math.ceil(total / limit)
+                });
+            }
+        );
+    });
 });
 
 // Start server
