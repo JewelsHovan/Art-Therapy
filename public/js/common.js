@@ -104,12 +104,22 @@ function updatePageTranslations() {
         Object.entries(translations[currentLang][pageName]).forEach(([key, value]) => {
             const elements = document.querySelectorAll(`[data-i18n="${key}"]`);
             elements.forEach(el => {
-                if (el.tagName === 'INPUT' && el.type === 'placeholder') {
+                if (el.tagName === 'INPUT') {
                     el.placeholder = value;
                 } else {
                     el.textContent = value;
                 }
             });
+        });
+
+        // Handle nested translations (like prompt suggestions)
+        Object.entries(translations[currentLang][pageName]).forEach(([key, value]) => {
+            if (typeof value === 'object') {
+                Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+                    const elements = document.querySelectorAll(`[data-i18n="${key}.${nestedKey}"]`);
+                    elements.forEach(el => el.textContent = nestedValue);
+                });
+            }
         });
     }
 }
