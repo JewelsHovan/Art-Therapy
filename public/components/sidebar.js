@@ -16,7 +16,6 @@ class Sidebar extends HTMLElement {
         this.setupIntersectionObserver();
         await this.fetchImages();
         this.render();
-        this.setupEventListeners();
     }
 
     setupIntersectionObserver() {
@@ -150,7 +149,9 @@ class Sidebar extends HTMLElement {
 
     setupEventListeners() {
         const toggleButton = this.shadowRoot.querySelector('.sidebar-toggle');
-        toggleButton.addEventListener('click', () => this.toggleSidebar());
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => this.toggleSidebar());
+        }
 
         window.addEventListener('custom-toggle-sidebar', () => this.toggleSidebar());
 
@@ -161,12 +162,14 @@ class Sidebar extends HTMLElement {
         }
 
         const menuItems = this.shadowRoot.querySelectorAll('.menu-item');
-        menuItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const imageId = item.dataset.imageId;
-                console.log('Clicked image:', imageId);
+        if (menuItems.length > 0) {
+            menuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const imageId = item.dataset.imageId;
+                    console.log('Clicked image:', imageId);
+                });
             });
-        });
+        }
     }
 
     toggleSidebar() {
@@ -319,6 +322,9 @@ class Sidebar extends HTMLElement {
                 <button class="sidebar-toggle" aria-label="Toggle Sidebar"></button>
             </div>
         `;
+        
+        // Setup event listeners after rendering
+        this.setupEventListeners();
     }
 
     getExistingStyles() {

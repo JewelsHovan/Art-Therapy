@@ -1,0 +1,224 @@
+/* Edit page styles */
+.controls-container {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.controls-left, .controls-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.back-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: #357abd;
+}
+
+.grid-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.grid-controls select,
+.grid-controls input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.view-toggle button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+.view-toggle button.active {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.artwork-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    margin-top: 1rem;
+}
+
+.artwork-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+
+.artwork-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.artwork-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.artwork-card:hover .artwork-image {
+    transform: scale(1.05);
+}
+
+.artwork-info {
+    padding: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+.artwork-prompt {
+    font-size: 1rem;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+}
+
+.artwork-date {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.artwork-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+}
+
+.action-button {
+    padding: 0.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #666;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    background: #eee;
+    color: #333;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .controls-container {
+        padding: 1rem;
+    }
+
+    .controls-left, .controls-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .artwork-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .artwork-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-controls {
+        flex-wrap: wrap;
+    }
+}
+
+/* Grid size variations */
+.grid-size-small .artwork-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.grid-size-large .artwork-grid {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}
+
+/* List view */
+.list-view .artwork-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.list-view .artwork-card {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    height: 150px;
+}
+
+.list-view .artwork-image {
+    height: 100%;
+    width: 200px;
+}
+
+.list-view .artwork-info {
+    border-top: none;
+    border-left: 1px solid #eee;
+}
+
+.list-view .artwork-actions {
+    border-top: none;
+    border-left: 1px solid #eee;
+    padding: 1rem;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .list-view .artwork-card {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .list-view .artwork-image {
+        width: 100%;
+        height: 200px;
+    }
+}

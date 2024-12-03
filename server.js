@@ -157,6 +157,42 @@ app.get('/api/artwork', (req, res) => {
     });
 });
 
+// Delete an image
+app.delete('/api/images/:id', (req, res) => {
+    const imageId = req.params.id;
+    
+    // First get the image path
+    db.get('SELECT file_path FROM images WHERE id = ?', [imageId], (err, row) => {
+        if (err) {
+            console.error('Error finding image:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        
+        if (!row) {
+            return res.status(404).json({ error: 'Image not found' });
+        }
+
+        // Delete the file
+        const filePath = path.join(__dirname, row.file_path);
+        fs.unlink(filePath, (err) => {
+            if (err && err.code !== 'ENOENT') {
+                console.error('Error deleting file:', err);
+                return res.status(500).json({ error: 'Failed to delete file' });
+            }
+
+            // Delete from database
+            db.run('DELETE FROM images WHERE id = ?', [imageId], (err) => {
+                if (err) {
+                    console.error('Error deleting from database:', err);
+                    return res.status(500).json({ error: 'Failed to delete from database' });
+                }
+                
+                res.json({ message: 'Image deleted successfully' });
+            });
+        });
+    });
+});
+
 // Start server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
