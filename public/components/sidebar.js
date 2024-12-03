@@ -289,9 +289,28 @@ class Sidebar extends HTMLElement {
                 .retry-button:hover {
                     background-color: #2980b9;
                 }
+                
+                .header {
+                    display: flex;
+                    align-items: center;
+                    padding: 1rem;
+                    cursor: pointer;
+                }
+                .header h1 {
+                    font-size: 1.5rem;
+                    color: #333;
+                    margin: 0;
+                    margin-left: 0.5rem;
+                    font-weight: 600;
+                }
+                .header img {
+                    width: 32px;
+                    height: 32px;
+                }
             </style>
             <div class="sidebar">
                 <div class="header" onclick="window.location.href='/index.html'">
+                    <img src="/images/palette.png" alt="Art Therapy Icon" />
                     <h1>Art Therapy</h1>
                 </div>
                 <div class="menu-items">
