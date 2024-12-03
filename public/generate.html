@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/generate.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="components/sidebar.js"></script>
+    <script src="js/translations.js"></script>
     <script type="module" src="js/common.js"></script>
     <script type="module" src="js/imageGenerator.js"></script>
     <script src="js/sidebar.js"></script>
@@ -58,30 +59,30 @@
         <div class="content-wrapper">
             <main class="main-content generate-page">
                 <div class="generated-images">
-                    <h3 class="section-header">Your Creations</h3>
+                    <h3 class="section-header" data-i18n="title">Your Creations</h3>
                     <div class="images-timeline">
                         <div class="empty-state">
                             <i class="fas fa-magic"></i>
-                            <p>Your generated images will appear here</p>
-                            <p class="subtitle">Try one of the prompts below to get started!</p>
+                            <p data-i18n="emptyStateMain">Your generated images will appear here</p>
+                            <p class="subtitle" data-i18n="emptyStateSubtitle">Try one of the prompts below to get started!</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="prompt-suggestions">
-                    <h3>Try these prompts</h3>
+                    <h3 data-i18n="promptSuggestionsTitle">Try these prompts</h3>
                     <div class="prompt-chips">
-                        <button class="prompt-chip">A serene landscape with cherry blossoms</button>
-                        <button class="prompt-chip">Abstract emotions in vibrant colors</button>
-                        <button class="prompt-chip">Peaceful zen garden at sunset</button>
-                        <button class="prompt-chip">Underwater city with bioluminescent life</button>
+                        <button class="prompt-chip" data-i18n="promptSuggestions.prompt1">A serene landscape with cherry blossoms</button>
+                        <button class="prompt-chip" data-i18n="promptSuggestions.prompt2">Abstract emotions in vibrant colors</button>
+                        <button class="prompt-chip" data-i18n="promptSuggestions.prompt3">Peaceful zen garden at sunset</button>
+                        <button class="prompt-chip" data-i18n="promptSuggestions.prompt4">Underwater city with bioluminescent life</button>
                     </div>
                 </div>
 
                 <div class="prompt-section">
-                    <input type="text" id="promptInput" class="prompt-input" placeholder="Enter your prompt...">
+                    <input type="text" id="promptInput" class="prompt-input" data-i18n="promptPlaceholder" placeholder="Enter your prompt...">
                     <button id="generateButton" class="generate-button">
-                        <i class="fas fa-magic"></i> Generate
+                        <i class="fas fa-magic"></i> <span data-i18n="generateButton">Generate</span>
                     </button>
                 </div>
             </main>

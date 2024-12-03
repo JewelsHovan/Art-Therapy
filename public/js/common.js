@@ -64,9 +64,87 @@ function initializeSettings() {
     settingsPanel.classList.add('hidden');
 }
 
+// Language Management
+function initializeLanguage() {
+    const languageSelect = document.getElementById('languageSelect');
+    const savedLanguage = localStorage.getItem('language') || 'en';
+    
+    // Set initial language
+    languageSelect.value = savedLanguage;
+    document.documentElement.lang = savedLanguage;
+    updatePageTranslations();
+
+    // Language change handler
+    languageSelect.addEventListener('change', (e) => {
+        const newLang = e.target.value;
+        localStorage.setItem('language', newLang);
+        document.documentElement.lang = newLang;
+        updatePageTranslations();
+    });
+}
+
+function updatePageTranslations() {
+    const currentLang = localStorage.getItem('language') || 'en';
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const pageName = currentPage.replace('.html', '');
+    
+    // Update settings panel translations
+    document.querySelector('.settings-header h3').textContent = translations[currentLang].settings.title;
+    document.querySelector('.settings-section h4:first-of-type').textContent = translations[currentLang].settings.language;
+    document.querySelector('.settings-section h4:last-of-type').textContent = translations[currentLang].settings.fontSize;
+    
+    // Update font size button texts
+    document.querySelectorAll('.font-size-btn').forEach(btn => {
+        const size = btn.dataset.size;
+        btn.textContent = translations[currentLang].settings[size];
+    });
+
+    // Update page-specific content
+    if (translations[currentLang][pageName]) {
+        Object.entries(translations[currentLang][pageName]).forEach(([key, value]) => {
+            const elements = document.querySelectorAll(`[data-i18n="${key}"]`);
+            elements.forEach(el => {
+                if (el.tagName === 'INPUT' && el.type === 'placeholder') {
+                    el.placeholder = value;
+                } else {
+                    el.textContent = value;
+                }
+            });
+        });
+    }
+}
+
+// Font Size Management
+function initializeFontSize() {
+    const fontSizeButtons = document.querySelectorAll('.font-size-btn');
+    const savedSize = localStorage.getItem('fontSize') || 'medium';
+    
+    // Set initial font size
+    document.documentElement.setAttribute('data-font-size', savedSize);
+    updateActiveFontSizeButton(savedSize);
+
+    // Font size button click handlers
+    fontSizeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const newSize = btn.dataset.size;
+            localStorage.setItem('fontSize', newSize);
+            document.documentElement.setAttribute('data-font-size', newSize);
+            updateActiveFontSizeButton(newSize);
+        });
+    });
+}
+
+function updateActiveFontSizeButton(activeSize) {
+    document.querySelectorAll('.font-size-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.size === activeSize);
+    });
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
     initializeSidebarState();
     initializeSettings();
+    initializeLanguage();
+    initializeFontSize();
 });
