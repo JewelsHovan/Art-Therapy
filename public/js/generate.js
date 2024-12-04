@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateButton = document.getElementById('generateButton');
     const imagesTimeline = document.querySelector('.images-timeline');
     const promptChips = document.querySelectorAll('.prompt-chip');
+    const emptyState = document.querySelector('.empty-state');
+    const promptSuggestions = document.querySelector('.prompt-suggestions');
 
     // Handle prompt chip clicks
     promptChips.forEach(chip => {
@@ -23,6 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
             generateButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
             const imageUrl = await generateImage(prompt);
+            
+            // Hide empty state and prompt suggestions
+            if (emptyState) emptyState.style.display = 'none';
+            if (promptSuggestions) promptSuggestions.style.display = 'none';
             
             // Create new timeline item
             const timelineItem = document.createElement('div');
